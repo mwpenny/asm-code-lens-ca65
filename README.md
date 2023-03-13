@@ -31,6 +31,18 @@ It provides support for:
 
 Please refer to the "Feature Contributions" tab to see how to enable/disable certain features
 
+## CA65 Fork
+
+This fork adds support for symbols defined using the following CA65-style directives:
+* `struct`
+* `union`
+* `enum`
+* `proc`
+* `scope`
+* `macro`
+* `define`
+
+Additionally, the `ca65` language ID is supported, which is implemented by the [ca65 Macro Assembler Language Support (6502/65816)](https://marketplace.visualstudio.com/items?itemName=tlgkccampbell.code-ca65) extension. I recommend using this over the built-in `asm-collection` language since it is unaware of CA65 directives.
 
 ## Incompatibilities
 

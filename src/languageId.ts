@@ -7,7 +7,13 @@ import {PackageInfo} from './whatsnew/packageinfo';
 /**
  * The known language IDs.
  */
-export type AllowedLanguageIds = 'asm-collection' | 'asm-list-file';
+export enum AllLanguageIds {
+	'asm-collection',
+	'asm-list-file',
+	'ca65'
+}
+
+export type AllowedLanguageIds = keyof typeof AllLanguageIds;
 
 
 /**
@@ -24,6 +30,10 @@ export class LanguageId {
 		return LanguageId._getGlobalIncludeForLanguageId('asm-list-file');
 	});
 
+	public static isValidId(languageId: string): languageId is AllowedLanguageIds {
+		return !Number.isInteger(Number(languageId)) && AllLanguageIds[languageId] !== undefined;
+	}
+
 
 	/**
 	 * The function wraps _getGlobalIncludeForLanguageId to cache it for a little time.
@@ -33,7 +43,7 @@ export class LanguageId {
 	 * @returns  E.g. "** /*.{asm, inc, s}"
 	 */
 	public static getGlobalIncludeForLanguageId(languageId: AllowedLanguageIds): string {
-		if (languageId == 'asm-collection')
+		if (languageId == 'asm-collection' || languageId == 'ca65')
 			return LanguageId.asmCollectionCache.getData();
 		if (languageId == 'asm-list-file')
 			return LanguageId.asmFileListCache.getData();

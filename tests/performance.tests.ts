@@ -263,12 +263,12 @@ suite('Performance', () => {
         });
 
         test('regexAnyReferenceForWord short word', () => {
-            const speed = compare(CommonRegexes.regexAnyReferenceForWord('a'), RefRegexes.regexAnyReferenceForWord('a'), true, true, BASE_COUNT);
+            const speed = compare(CommonRegexes.regexAnyReferenceForWord('a', 'asm-collection'), RefRegexes.regexAnyReferenceForWord('a'), true, true, BASE_COUNT);
             console.log('regexAnyReferenceForWord short word: ', speed + '% speed');
         });
 
         test('regexAnyReferenceForWord', () => {
-            const speed = compare(CommonRegexes.regexAnyReferenceForWord('pause'), RefRegexes.regexAnyReferenceForWord('pause'), true, true, BASE_COUNT);
+            const speed = compare(CommonRegexes.regexAnyReferenceForWord('pause', 'asm-collection'), RefRegexes.regexAnyReferenceForWord('pause'), true, true, BASE_COUNT);
             console.log('regexAnyReferenceForWord: ', speed + '% speed');
         });
 

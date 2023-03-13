@@ -78,7 +78,7 @@ export class Commands {
                 const fileName = fm.filePath;
 
                 // And search for references
-                const regex = CommonRegexes.regexAnyReferenceForWord(searchLabel);
+                const regex = CommonRegexes.regexAnyReferenceForWord(searchLabel, languageId);
                 const locations = await grep(regex, cfg.wsFolderPath, languageId, cfg.excludeFiles);
                 // Remove any locations because of module information (dot notation)
                 const reducedLocations = await reduceLocations(regexLbls, locations, fileName, pos, true, true);

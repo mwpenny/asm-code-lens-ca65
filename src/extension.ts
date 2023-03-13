@@ -16,6 +16,7 @@ import {Config} from './config';
 import {DonateInfo} from './donate/donateinfo';
 import {WorkspaceSymbolProvider} from './WorkspaceSymbolProvider';
 import {FoldingProvider} from './FoldingRangeProvider';
+import {LanguageId}  from './languageId';
 
 
 
@@ -75,7 +76,7 @@ export function activate(context: vscode.ExtensionContext) {
         if (!doc)
             return;
         const languageId = doc.languageId;
-        if (languageId != 'asm-collection' && languageId != 'asm-list-file')
+        if (!LanguageId.isValidId(languageId))
             return;
         // Check which workspace
         const config = Config.getConfigForDoc(doc);
@@ -126,9 +127,14 @@ function configure(context: vscode.ExtensionContext, event?: vscode.Configuratio
     // Re-read settings for all workspaces.
     Config.init();
 
-    // Both "languages": asm files and list files.
-    const asmListFiles: vscode.DocumentSelector = [
+    const asmSourceFiles: vscode.DocumentFilter[] = [
         {scheme: "file", language: 'asm-collection'},
+        {scheme: "file", language: 'ca65'}
+    ];
+
+    // Both "languages": asm files and list files.
+    const asmListFiles: vscode.DocumentFilter[] = [
+        ...asmSourceFiles,
         {scheme: "file", language: 'asm-list-file'}
     ];
 
@@ -185,12 +191,15 @@ function configure(context: vscode.ExtensionContext, event?: vscode.Configuratio
 
     // Register (always, even if disabled)
     {
-        regFoldingProvider = vscode.languages.registerFoldingRangeProvider({scheme: "file", language: 'asm-collection'}, new FoldingProvider());
+        regFoldingProvider = vscode.languages.registerFoldingRangeProvider(asmSourceFiles, new FoldingProvider());
         context.subscriptions.push(regFoldingProvider);
     }
 
     // Toggle line Comment configuration
-    vscode.languages.setLanguageConfiguration("asm-collection", {comments: {lineComment: Config.globalToggleCommentPrefix}});
+    for (const fileType of asmSourceFiles) {
+        vscode.languages.setLanguageConfiguration(fileType.language as string, {comments: {lineComment: Config.globalToggleCommentPrefix}});
+    }
+
     // Store
     setCustomCommentPrefix(Config.globalToggleCommentPrefix);
 }

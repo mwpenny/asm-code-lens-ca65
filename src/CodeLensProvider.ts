@@ -105,7 +105,6 @@ export class CodeLensProvider implements vscode.CodeLensProvider {
         //console.log('resolveCodeLens start: ', codeLens.document.uri.fsPath);
         // Search the references
         const searchWord = codeLens.symbol;
-        const searchRegex = CommonRegexes.regexAnyReferenceForWord(searchWord);
         //console.log('searchWord', searchWord);
 
         const doc = codeLens.document;
@@ -113,6 +112,8 @@ export class CodeLensProvider implements vscode.CodeLensProvider {
         const config: Config = codeLens.config;
 
         const languageId = doc.languageId as AllowedLanguageIds;
+        const searchRegex = CommonRegexes.regexAnyReferenceForWord(searchWord, languageId);
+
         const locations = await grep(searchRegex, config.wsFolderPath, languageId, config.excludeFiles);
         // Remove any locations because of module information (dot notation)
         const regexLbls = CommonRegexes.regexLabel(config, languageId);

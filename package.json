@@ -221,7 +221,7 @@
         "menus": {
             "editor/context": [
                 {
-                    "when": "resourceLangId == asm-collection || resourceLangId == asm-list-file",
+                    "when": "resourceLangId == asm-collection || resourceLangId == asm-list-file || resourceLangId == ca65",
                     "command": "asm-code-lens.find-labels-with-no-reference",
                     "group": "0_navigation@10"
                 }

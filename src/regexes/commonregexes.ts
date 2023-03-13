@@ -256,7 +256,11 @@ export class CommonRegexes {
      *  1 = preceding characters before 'searchWord'.
      * Used by resolveCodeLens.
      */
-    public static regexAnyReferenceForWord(searchWord: string): RegExp {
+    public static regexAnyReferenceForWord(searchWord: string, languageId: AllowedLanguageIds): RegExp {
+        if (languageId === 'ca65') {
+            return new RegexIndexOf(searchWord, new RegExp('^([^;]*)\\b' + searchWord + '\\b'));
+        }
+
         return new RegexIndexOf(searchWord, new RegExp('^([^#]*)\\b' + searchWord + '\\b'));
     }
 

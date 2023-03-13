@@ -84,7 +84,7 @@ export class DocumentSymbolProvider implements vscode.DocumentSymbolProvider {
                         // Relative label
                         lastAbsSymbolChildren?.push(lastSymbol);
                     }
-                    else if (label.startsWith('@')) {
+                    else if (languageId !== 'ca65' && label.startsWith('@')) {
                         // Absolute label ignoring MODULE
                         symbols.push(lastSymbol);
                     }

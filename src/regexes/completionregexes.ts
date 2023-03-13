@@ -56,11 +56,11 @@ export class CompletionRegexes {
 	 */
 	protected static regexEveryLabelColonForWord(fuzzySearchWord: string, languageId: AllowedLanguageIds): RegExp {
 		if (languageId === 'asm-list-file') {
-			return new RegExp('^(.*)\\b' + fuzzySearchWord + '[\\w\\.]*:', 'i');
+			return new RegExp('^(.*)\\b' + fuzzySearchWord + '[\\w\\.]*:(?:[^:]|$)', 'i');
 		}
 		// "asm-collection"
 		return new RegExp('(^@?[\\w\\.]*|^.*\\s@?[\\w\\.]*)\\b' +
-		fuzzySearchWord + '[\\w\\.]*:', 'i');
+		fuzzySearchWord + '[\\w\\.]*:(?:[^:]|$)', 'i');
 	}
 
 

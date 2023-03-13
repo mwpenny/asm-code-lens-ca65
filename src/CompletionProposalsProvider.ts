@@ -131,6 +131,9 @@ export class CompletionProposalsProvider implements vscode.CompletionItemProvide
         // Find all sjasmplus MACROs in the document
         const searchSjasmMacro = CompletionRegexes.regexEveryMacroForWord(fuzzySearchWord, languageId);
         regexes.push(searchSjasmMacro);
+        // Find all CA65 directives in the document
+        const searchCA65 = CommonRegexes.regexCA65DirectiveForWord(fuzzySearchWord, true);
+        regexes.push(searchCA65);
 
         const locations = await grepMultiple(regexes, config.wsFolderPath, languageId, config.excludeFiles);
         // Reduce the found locations.

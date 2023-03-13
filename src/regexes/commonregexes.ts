@@ -207,6 +207,48 @@ export class CommonRegexes {
         return new RegexTwo(/macro/i, new RegExp('^(.*\\s(macro|MACRO)\\s+)' + searchWord + '\\b'));
     }
 
+    /**
+     * Searches for a CA65-style directive that contains the given word.
+     * Capture groups:
+     *  1 = preceding characters before 'searchWord'.
+     * Used by DefinitionProvider, HoverProvider, and CompletionProposalsProvider.
+     */
+    public static regexCA65DirectiveForWord(searchWord: string, partialWord: boolean = false): RegExp {
+        const end = partialWord ? "[\\w\\.]*\\b" : "\\b";
+        return new RegExp(`^(\\s*\\.(?:struct|union|enum|proc|scope|macro|define)\\s+)${searchWord}${end}`, 'i');
+    }
+
+    /**
+     * Searches for all CA65-style directives.
+     * Capture groups:
+     *  1 = preceding characters before symbol name.
+     *  2 = the name of the symbol.
+     * Used by CodeLensProvider and DocumentSymbolProvider.
+     */
+    public static regexAllCA65Directives(): RegExp {
+        return /^(\s*\.(?:struct|union|enum|proc|scope|macro|define)\s+)(.*)/i;
+    }
+
+    /** Returns the regex used for the start of a CA65-style define.
+     * Used by FoldingRangeProvider.
+     */
+    public static regexCA65Define(): RegExp {
+        return /^\s*\.define\s+.*/i;
+    }
+
+    /** Returns the regex used for the start of CA65-style directive blocks.
+     * Used by FoldingRangeProvider.
+     */
+    public static regexCA65BlockStart(): RegExp {
+        return /^\s*\.(struct|union|enum|proc|scope|macro)/i;
+    }
+
+    /** Returns the regex used for the end of CA65-style directive blocks.
+     * Used by FoldingRangeProvider and DocumentSymbolProvider.
+     */
+    public static regexCA65BlockEnd(): RegExp {
+        return /^\s*\.(endstruct|endunion|endenum|endproc|endscope|endmacro)/i;
+    }
 
     /**
      * Searches any reference for a given word (label).

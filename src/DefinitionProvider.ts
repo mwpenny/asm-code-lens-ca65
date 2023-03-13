@@ -92,6 +92,9 @@ export class DefinitionProvider implements vscode.DefinitionProvider {
         // Find all sjasmplus STRUCTs in the document
         const searchSjasmStruct = DefinitionRegexes.regexStructForWord(searchWord);
         regexes.push(searchSjasmStruct);
+        // Find all CA65 directives in the document
+        const searchCA65 = CommonRegexes.regexCA65DirectiveForWord(searchWord);
+        regexes.push(searchCA65);
 
         const locations = await grepMultiple(regexes, config.wsFolderPath, document.languageId, config.excludeFiles);
         const regexLbls = CommonRegexes.regexLabel(config, languageId);

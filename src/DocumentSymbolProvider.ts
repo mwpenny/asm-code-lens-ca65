@@ -38,6 +38,10 @@ export class DocumentSymbolProvider implements vscode.DocumentSymbolProvider {
 
         const regexModule = SymbolRegexes.regexModuleLabel();
         const regexStruct = SymbolRegexes.regexStructLabel();
+
+        const regexCA65 = CommonRegexes.regexAllCA65Directives();
+        const regexCA65BlockEnd = CommonRegexes.regexCA65BlockEnd();
+
         //const regexNotLabels = /^(include|if|endif|else|elif)$/i;
         const excludes = ['include', ...config.labelsExcludes];
         const regexConst = SymbolRegexes.regexConst();
@@ -103,6 +107,35 @@ export class DocumentSymbolProvider implements vscode.DocumentSymbolProvider {
                     lineContents = lineContents.substring(len);
                     // Add a whitespace to recognize a directly following MODULE
                     lineContents += ' ';
+                }
+            }
+
+            // Check for CA65-style directives
+            const matchCA65 = regexCA65.exec(lineContents);
+            if (matchCA65) {
+                const directive = matchCA65[1].toLowerCase().trim();
+                const symbolName = matchCA65[2];
+
+                const range = new vscode.Range(line, 0, line, 10000);
+                const ca65Symbol = new vscode.DocumentSymbol(symbolName, '', vscode.SymbolKind.Method, range, range);
+
+                if (lastModules.length > 0) {
+                    // Add to children of last module
+                    const lastModule = lastModules[lastModules.length - 1];
+                    lastModule.children.push(ca65Symbol);
+                } else {
+                    symbols.push(ca65Symbol);
+                }
+
+                const canHaveChildren = !directive.startsWith(".define");
+                if (canHaveChildren) {
+                    lastModules.push(ca65Symbol);
+                }
+            } else {
+                const matchCA65BlockEnd = regexCA65BlockEnd.exec(lineContents);
+                if (matchCA65BlockEnd) {
+                    lastModules.pop();
+                    lastAbsSymbolChildren = undefined;
                 }
             }
 

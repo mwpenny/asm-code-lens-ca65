@@ -34,6 +34,8 @@ export class FoldingProvider implements vscode.FoldingRangeProvider {
 
 		// Prepare regexes
 		const regexLabel = CommonRegexes.regexLabel(config, 'asm-collection');
+		const regexCA65Define = CommonRegexes.regexCA65Define();
+		const regexCA65BlockStart = CommonRegexes.regexCA65BlockStart();
 		const regexCommentMultipleStart = FoldingRegexes.regexCommentMultipleStart();
 		const regexCommentMultipleEnd = FoldingRegexes.regexCommentMultipleEnd();
 		const regexCommentSingle = FoldingRegexes.regexCommentSingleLine(Config.globalToggleCommentPrefix);
@@ -73,15 +75,21 @@ export class FoldingProvider implements vscode.FoldingRangeProvider {
 						nextState = ';';
 					else if (regexCommentMultipleStart.exec(line))
 						nextState = '/*';
+
+					// CA65-style directives have higher precedence than labels and comments
+					const foundCA65Directive = regexCA65BlockStart.exec(line) || regexCA65Define.exec(line);
+					const endState = nextState || foundCA65Directive;
+
+					// Check if a previous range ends
+					if (endState && state === 'label') {
+						this.addRange(foldingRanges, rangeLineNrStart, lineNr - 1, vscode.FoldingRangeKind.Region);
+					}
 					if (nextState) {
-						// Check if a previous range ends
-						if (state === 'label') {
-							this.addRange(foldingRanges, rangeLineNrStart, lineNr - 1, vscode.FoldingRangeKind.Region);
-						}
 						// Start a new folding marker
 						rangeLineNrStart = lineNr;
 						state = nextState;
 					}
+
 					break;
 			}
 		}
@@ -103,6 +111,9 @@ export class FoldingProvider implements vscode.FoldingRangeProvider {
 
 		// Add ranges for MACROs
 		this.addRangesForRegex(lines, foldingRanges, FoldingRegexes.regexMacroStart(), FoldingRegexes.regexMacroEnd());
+
+		// Add ranges for CA65-style directives
+		this.addRangesForRegex(lines, foldingRanges, CommonRegexes.regexCA65BlockStart(), CommonRegexes.regexCA65BlockEnd());
 
 		return foldingRanges;
 	}

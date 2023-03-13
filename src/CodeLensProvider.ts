@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import {AllowedLanguageIds} from './languageId';
 import {CommonRegexes} from './regexes/commonregexes';
-import {grep, grepTextDocument, reduceLocations} from './grep';
+import {grep, grepTextDocumentMultiple, reduceLocations} from './grep';
 import {Config} from './config';
 import {DonateInfo} from './donate/donateinfo';
 
@@ -57,8 +57,13 @@ export class CodeLensProvider implements vscode.CodeLensProvider {
 
         //console.log(document.uri.fsPath);
         const codeLenses: Array<vscode.CodeLens> = [];
-        const regex = CommonRegexes.regexLabel(config, languageId);
-        const matches = grepTextDocument(document, regex);
+
+        const regexes: RegExp[] = [
+            CommonRegexes.regexLabel(config, languageId),
+            CommonRegexes.regexAllCA65Directives()
+        ];
+
+        const matches = grepTextDocumentMultiple(document, regexes);
         // Loop all matches and create code lenses
         for (const fmatch of matches) {
             // Create codeLens

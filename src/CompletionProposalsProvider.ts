@@ -3,7 +3,6 @@ import * as vscode from 'vscode';
 import {Config} from './config';
 import {getModule, grepMultiple, reduceLocations} from './grep';
 import {CompletionRegexes} from './regexes/completionregexes';
-import {AllowedLanguageIds} from './languageId';
 import {getCompleteLabel, getNonLocalLabel} from './grepextra';
 
 
@@ -112,7 +111,7 @@ export class CompletionProposalsProvider implements vscode.CompletionItemProvide
         const range = new vscode.Range(new vscode.Position(row, start), new vscode.Position(row, end));
 
         // Get the first non-local label
-        const languageId = document.languageId as AllowedLanguageIds;
+        const languageId = document.languageId;
         const regexLbls = CommonRegexes.regexLabel(config, languageId);
         let nonLocalLabel;  // Only used for local labels
         if (rowLabel.label.startsWith('.')) {
@@ -135,7 +134,7 @@ export class CompletionProposalsProvider implements vscode.CompletionItemProvide
         const searchCA65 = CommonRegexes.regexCA65DirectiveForWord(fuzzySearchWord, true);
         regexes.push(searchCA65);
 
-        const locations = await grepMultiple(regexes, config.wsFolderPath, languageId, config.excludeFiles);
+        const locations = await grepMultiple(regexes, config.includeFiles, config.excludeFiles);
         // Reduce the found locations.
         const reducedLocations = await reduceLocations(regexLbls, locations, document.fileName, position, true, false);
         // Now put all proposal texts in a map. (A map to make sure every item is listed only once.)

@@ -3,6 +3,7 @@ import {Config} from './config';
 import {CommonRegexes} from './regexes/commonregexes';
 import {FoldingRegexes} from './regexes/foldingregexes';
 import {stripAllComments} from './comments';
+import {LanguageId} from './languageId';
 
 
 
@@ -33,7 +34,7 @@ export class FoldingProvider implements vscode.FoldingRangeProvider {
 		const foldingRanges: vscode.FoldingRange[] = [];
 
 		// Prepare regexes
-		const regexLabel = CommonRegexes.regexLabel(config, 'asm-collection');
+		const regexLabel = CommonRegexes.regexLabel(config, LanguageId.ASM_COLLECTION);
 		const regexCA65Define = CommonRegexes.regexCA65Define();
 		const regexCA65BlockStart = CommonRegexes.regexCA65BlockStart();
 		const regexCommentMultipleStart = FoldingRegexes.regexCommentMultipleStart();
@@ -89,7 +90,6 @@ export class FoldingProvider implements vscode.FoldingRangeProvider {
 						rangeLineNrStart = lineNr;
 						state = nextState;
 					}
-
 					break;
 			}
 		}

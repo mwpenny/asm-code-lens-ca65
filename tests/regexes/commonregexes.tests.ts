@@ -1,4 +1,4 @@
-import { AllowedLanguageIds } from './../../src/languageId';
+import { LanguageId } from './../../src/languageId';
 import * as assert from 'assert';
 import {CommonRegexes} from '../../src/regexes/commonregexes';
 import {CompletionRegexes} from './../../src/regexes/completionregexes';
@@ -324,7 +324,7 @@ suite('CommonRegexes', () => {
 
 
     // insOuts: search-word, input-line, should-match, found-prefix
-    function checkResultsSearchWord(func: (string, languageId?) => RegExp, insOuts: (string | boolean)[], languageId: AllowedLanguageIds) {
+    function checkResultsSearchWord(func: (string, languageId?) => RegExp, insOuts: (string | boolean)[], languageId: string) {
         try {
             // Check the test
             const count = insOuts.length;
@@ -383,7 +383,7 @@ suite('CommonRegexes', () => {
                 "label", "xlabel.yyy:", false, "",
             ];
 
-            checkResultsSearchWord(CommonRegexes.regexLabelColonForWord, insOuts, 'asm-collection');
+            checkResultsSearchWord(CommonRegexes.regexLabelColonForWord, insOuts, LanguageId.ASM_COLLECTION);
             done();
         });
 
@@ -397,7 +397,7 @@ suite('CommonRegexes', () => {
                 "label", "626++C4D1 FE 10    label:", true, "626++C4D1 FE 10    ",
             ];
 
-            checkResultsSearchWord(CommonRegexes.regexLabelColonForWord, insOuts, 'asm-list-file');
+            checkResultsSearchWord(CommonRegexes.regexLabelColonForWord, insOuts, LanguageId.ASM_LIST_FILE);
             done();
         });
 
@@ -433,7 +433,7 @@ suite('CommonRegexes', () => {
                 "label", "xxx.label:", false, "",
             ];
 
-            checkResultsSearchWord(CommonRegexes.regexLabelWithoutColonForWord, insOuts, 'asm-collection');
+            checkResultsSearchWord(CommonRegexes.regexLabelWithoutColonForWord, insOuts, LanguageId.ASM_COLLECTION);
             done();
         });
 
@@ -448,7 +448,7 @@ suite('CommonRegexes', () => {
                 "Mm_0123456789", "  module Mm_0123456789;", true, "  module ",
             ];
 
-            checkResultsSearchWord(CommonRegexes.regexModuleForWord, insOuts, 'asm-collection');
+            checkResultsSearchWord(CommonRegexes.regexModuleForWord, insOuts, LanguageId.ASM_COLLECTION);
             done();
         });
 
@@ -462,7 +462,7 @@ suite('CommonRegexes', () => {
                 "m", "626++C4D1 FE 10    module m", true, "626++C4D1 FE 10    module ",
             ];
 
-            checkResultsSearchWord(CommonRegexes.regexModuleForWord, insOuts, 'asm-list-file');
+            checkResultsSearchWord(CommonRegexes.regexModuleForWord, insOuts, LanguageId.ASM_LIST_FILE);
             done();
         });
 
@@ -477,7 +477,7 @@ suite('CommonRegexes', () => {
                 "Mm_0123456789", "  macro Mm_0123456789;", true, "  macro ",
             ];
 
-            checkResultsSearchWord(CommonRegexes.regexMacroForWord, insOuts, 'asm-collection');
+            checkResultsSearchWord(CommonRegexes.regexMacroForWord, insOuts, LanguageId.ASM_COLLECTION);
             done();
         });
 
@@ -491,7 +491,7 @@ suite('CommonRegexes', () => {
                 "m", "626++C4D1 FE 10    macro m", true, "626++C4D1 FE 10    macro ",
             ];
 
-            checkResultsSearchWord(CommonRegexes.regexMacroForWord, insOuts, 'asm-list-file');
+            checkResultsSearchWord(CommonRegexes.regexMacroForWord, insOuts, LanguageId.ASM_LIST_FILE);
             done();
         });
 
@@ -519,8 +519,8 @@ suite('CommonRegexes', () => {
                 "main", "# file closed: main.asm", false, "",
             ];
 
-            checkResultsSearchWord(CommonRegexes.regexAnyReferenceForWord, insOuts, 'asm-collection');
-            checkResultsSearchWord(CommonRegexes.regexAnyReferenceForWord, insOuts, 'asm-list-file');
+            checkResultsSearchWord(CommonRegexes.regexAnyReferenceForWord, insOuts, LanguageId.ASM_COLLECTION);
+            checkResultsSearchWord(CommonRegexes.regexAnyReferenceForWord, insOuts, LanguageId.ASM_LIST_FILE);
             done();
         });
     });

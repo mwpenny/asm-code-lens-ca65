@@ -42,39 +42,22 @@ This fork adds support for symbols defined using the following CA65-style direct
 * `macro`
 * `define`
 
-Additionally, the `ca65` language ID is supported, which is implemented by the [ca65 Macro Assembler Language Support (6502/65816)](https://marketplace.visualstudio.com/items?itemName=tlgkccampbell.code-ca65) extension. I recommend using this over the built-in `asm-collection` language since it is unaware of CA65 directives.
+Additionally, the `asm-code-lens.includeFiles` setting is reinstated so that the extension can be used with any language -- not just the built-in `asm-collection` and `asm-list-file` language IDs. This is useful for running alongside another assembly extension, such as [ca65 Macro Assembler Language Support (6502/65816)](https://marketplace.visualstudio.com/items?itemName=tlgkccampbell.code-ca65), which provides CA65-specific syntax highlighting and problem matching.
 
 ## Incompatibilities
 
-If you are using "ASM Code Lens" with other extensions that define assembler language ids (such as [Z80 Macro-Assembler](https://github.com/mborik/z80-macroasm-vscode) or other syntax highlighting extensions for assembly code) you might experience problems. E.g. code lenses do not work.
+It has been reported a few times now that there might be problems using ASM Code Lens together with the [Z80 Macro-Assembler](https://github.com/mborik/z80-macroasm-vscode) extension.
 
-The underlying problem is that vscode can associate a file only to one language id. I.e. the language id of your assembler files is associated to something else than "Assembler file" ASM Code Lens will not find the file anymore.
-
-When selecting an assembly file the file association is shown in the right side of the status bar, it should show something like:
-![](assets/remote/status_bar_file_association.jpg)
-Otherwise click on it and select the right association.
-
+Both extensions do more or less the same.
+So, if you are doing Z80 stuff it is recommended to either install the "Z80 Macro-Assembler" extension or "ASM Code Lens", not both.
 
 ## Installation
 
-Install through Visual Studio Code Marketplace.
-The extension is called "ASM Code Lens".
+Install by downloading the desired `.vsix` file from the releases page and using the [install from VSIX](https://code.visualstudio.com/docs/editor/extension-marketplace#_install-from-a-vsix) option in VSCode.
 
-It supports assembler source files and list files by defining the language identifiers "Assembler file" ('asm-collection') and "Assembler list file" ('asm-list-file').
-Your file has to be associated to one of those languages.
-By default "Assembler file" contains the following suffixes:
-- .asm
-- .inc
-- .s
-- .a80
-- .z80
-
-The "Assembler list file" defaults to:
-- .list
-- .lis
-
-But you can manually add any file or file suffixes to the language ids via vscode (language mode).
-
+It supports the following assembler file suffixes by default:
+.asm, .s, .inc, .a80, .list, .lis, .z80.
+Others are configurable. (Configuration not possible for syntax highlighting.)
 
 ## Hexadecimal Calculator
 

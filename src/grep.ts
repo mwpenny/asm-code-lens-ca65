@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import {stripAllComments} from './comments';
 import {FileInfo, getCompleteLabel, getLabelAndModuleLabelFromFileInfo, getModuleFileInfo} from './grepextra';
-import {AllowedLanguageIds, LanguageId}  from './languageId';
 import {CommonRegexes} from './regexes/commonregexes';
 
 
@@ -114,19 +113,17 @@ async function getLinesForFile(filePath: string): Promise<string[]> {
  * opts includes the directory the glob pattern and the regular expression (the word) to
  * search for.
  * @param regex The regular expression to search for.
- * @param rootFolder The search is limited to the root / project folder. This needs to contain a trailing '/'.
- * @param languageId Only files with the language ID are grepped. Is either "asm-collection" or "asm-list-file".
+ * @param globIncludeFiles The glob pattern to use to include files.
  * @param globExcludeFiles The glob pattern to use to exclude files.
  * @returns An array of the vscode locations of the found expressions.
  */
-export async function grep(regex: RegExp, rootFolder: string, languageId: AllowedLanguageIds, globExcludeFiles: string): Promise<GrepLocation[]> {
+export async function grep(regex: RegExp, globIncludeFiles: string, globExcludeFiles: string): Promise<GrepLocation[]> {
     const allMatches = new Map();
 
     try {
-        const globInclude = LanguageId.getGlobalIncludeForLanguageId(languageId);
-        const allUris = await vscode.workspace.findFiles(globInclude, globExcludeFiles);
-        const uris = allUris.filter(uri => uri.fsPath.startsWith(rootFolder));
-        for (const uri of uris) {
+        const allUris = await vscode.workspace.findFiles(globIncludeFiles, globExcludeFiles);
+
+        for (const uri of allUris) {
             // Check if file is opened in editor
             const filePath = uri.fsPath;
             const foundDoc = await openTextDocument(filePath);
@@ -173,17 +170,16 @@ export async function grep(regex: RegExp, rootFolder: string, languageId: Allowe
  * terminated by a ':' and for labels that start on 1rst column.
  * Simply calls 'grep' multiple times.
  * @param regexes Array of regexes.
- * @param rootFolder The search is limited to the root / project folder. This needs to contain a trailing '/'.
- * @param languageId Only files with the language ID are grepped. Is either "asm-collection" or "asm-list-file".
+ * @param globIncludeFiles The glob pattern to use to include files.
  * @param globExcludeFiles The glob pattern to use to exclude files.
  * @return An array with all regex search results.
  */
-export async function grepMultiple(regexes: RegExp[], rootFolder: string, languageId: AllowedLanguageIds, globExcludeFiles: string): Promise<GrepLocation[]> {
+export async function grepMultiple(regexes: RegExp[], globIncludeFiles: string, globExcludeFiles: string): Promise<GrepLocation[]> {
     let allLocations: Array<GrepLocation> = [];
 
     // grep all regex
     for (const regex of regexes) {
-        const locations = await grep(regex, rootFolder, languageId, globExcludeFiles);
+        const locations = await grep(regex, globIncludeFiles, globExcludeFiles);
         // Add found locations
         allLocations.push(...locations);
     }

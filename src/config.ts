@@ -81,6 +81,9 @@ export class Config {
 	// true if folding is enabled
 	public enableFolding: boolean;
 
+	// true if CA65-style cheap local labels (@ prefix) should be nested in outline.
+	public enableCA65CheapLocalLabelNestingInOutline: boolean;
+
 	// true if labels with colons should be searched.
 	public labelsWithColons: boolean;
 
@@ -89,6 +92,9 @@ export class Config {
 
 	// A list of strings with words to exclude from the found labels list.
 	public labelsExcludes: string[];
+
+	// Include files (glob pattern)
+	public includeFiles: string;
 
 	// Exclude files (glob pattern)
 	public excludeFiles: string;
@@ -136,6 +142,7 @@ export class Config {
 				config.labelsWithoutColons = false;
 			const labelsExcludesString = settings.labels?.excludes || '';
 			config.labelsExcludes = labelsExcludesString.toLowerCase().split(';');
+			config.includeFiles = settings.includeFiles;
 			config.excludeFiles = settings.excludeFiles;
 			config.enableCodeLenses = settings.enableCodeLenses;
 			config.enableHovering = settings.enableHovering;
@@ -152,6 +159,7 @@ export class Config {
 				config.workspaceSymbolsRequiredLength = 1;
 			config.enableWorkspaceSymbols = settings.enableWorkspaceSymbols;
 			config.enableFolding = settings.enableFolding;
+			config.enableCA65CheapLocalLabelNestingInOutline = settings.outline?.enableCA65CheapLocalLabelNesting || false;
 			// Store
 			Config.configs.set(fsPath, config);
 			// Set global variables
@@ -178,6 +186,15 @@ export class Config {
 		const workspaceFolder = vscode.workspace.getWorkspaceFolder(document.uri);
 		if (!workspaceFolder)
 			return undefined;
+		return this.getConfigForWorkspace(workspaceFolder);
+	}
+
+	/** Returns a config for a workspace.
+	 * @param workspaceFolder The WorkspaceFolder.
+	 * @returns The corresponding config or undefined for the specified
+	 * workspace folder.
+	 */
+	public static getConfigForWorkspace(workspaceFolder: vscode.WorkspaceFolder) {
 		return Config.configs.get(workspaceFolder.uri.fsPath);
 	}
 }

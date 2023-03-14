@@ -1,5 +1,4 @@
 import {Config} from './config';
-import {AllowedLanguageIds} from './languageId';
 import {CommonRegexes} from './regexes/commonregexes';
 import * as vscode from 'vscode';
 import {grep, reduceLocations} from './grep';
@@ -35,8 +34,8 @@ export class RenameProvider implements vscode.RenameProvider {
         const oldName = document.getText(document.getWordRangeAtPosition(position));
         const searchRegex = RenameRegexes.regexAnyReferenceForWordGlobal(oldName);
 
-        const languageId = document.languageId as AllowedLanguageIds;
-        const locations = await grep(searchRegex, config.wsFolderPath, languageId, config.excludeFiles);
+        const languageId = document.languageId;
+        const locations = await grep(searchRegex, config.includeFiles, config.excludeFiles);
         const regexLbls = CommonRegexes.regexLabel(config, languageId);
         const reducedLocations = await reduceLocations(regexLbls, locations, document.fileName, position, false, true, /\w/);
 

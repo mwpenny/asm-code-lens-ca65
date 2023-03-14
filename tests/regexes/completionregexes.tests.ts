@@ -1,4 +1,4 @@
-import { AllowedLanguageIds } from './../../src/languageId';
+import { LanguageId } from './../../src/languageId';
 import * as assert from 'assert';
 import {CompletionRegexes} from './../../src/regexes/completionregexes';
 
@@ -11,7 +11,7 @@ suite('CompletionRegexes', () => {
     suite('RegEx with search-word middle, ignore case', () => {
 
         // insOuts: search-word, input-line, should-match, found-prefix
-        function checkResultsSearchWord(func: (string, languagId?: AllowedLanguageIds) => RegExp, insOuts: (string | boolean)[], languageId: AllowedLanguageIds) {
+        function checkResultsSearchWord(func: (string, languagId?: string) => RegExp, insOuts: (string | boolean)[], languageId: string) {
             try {
                 // Check the test
                 const count = insOuts.length;
@@ -81,7 +81,7 @@ suite('CompletionRegexes', () => {
                     "label", "@Label:", true, "@",
                 ];
 
-                checkResultsSearchWord(CompletionRegexesMock.regexEveryLabelColonForWord, insOuts, 'asm-collection');
+                checkResultsSearchWord(CompletionRegexesMock.regexEveryLabelColonForWord, insOuts, LanguageId.ASM_COLLECTION);
                 done();
             });
 
@@ -106,7 +106,7 @@ suite('CompletionRegexes', () => {
                     "label", "626++C4D1 FE 10    @label:", true, "626++C4D1 FE 10    @",
                 ];
 
-                checkResultsSearchWord(CompletionRegexesMock.regexEveryLabelColonForWord, insOuts, 'asm-list-file');
+                checkResultsSearchWord(CompletionRegexesMock.regexEveryLabelColonForWord, insOuts, LanguageId.ASM_LIST_FILE);
                 done();
             });
         });
@@ -153,8 +153,8 @@ suite('CompletionRegexes', () => {
                 "label", "LaBeL", true, "",
             ];
 
-            checkResultsSearchWord(CompletionRegexesMock.regexEveryLabelWithoutColonForWord, insOuts, 'asm-collection');
-            checkResultsSearchWord(CompletionRegexesMock.regexEveryLabelWithoutColonForWord, insOuts, 'asm-list-file');
+            checkResultsSearchWord(CompletionRegexesMock.regexEveryLabelWithoutColonForWord, insOuts, LanguageId.ASM_COLLECTION);
+            checkResultsSearchWord(CompletionRegexesMock.regexEveryLabelWithoutColonForWord, insOuts, LanguageId.ASM_LIST_FILE);
             done();
         });
 
@@ -174,7 +174,7 @@ suite('CompletionRegexes', () => {
                 "m", " module a.m", false, "",
             ];
 
-            checkResultsSearchWord(CompletionRegexesMock.regexEveryModuleForWord, insOuts, 'asm-collection');
+            checkResultsSearchWord(CompletionRegexesMock.regexEveryModuleForWord, insOuts, LanguageId.ASM_COLLECTION);
             done();
         });
 
@@ -189,7 +189,7 @@ suite('CompletionRegexes', () => {
                 "m", "626++C4D1 FE 10    module m", true, "626++C4D1 FE 10    module ",
             ];
 
-            checkResultsSearchWord(CompletionRegexesMock.regexEveryModuleForWord, insOuts, 'asm-list-file');
+            checkResultsSearchWord(CompletionRegexesMock.regexEveryModuleForWord, insOuts, LanguageId.ASM_LIST_FILE);
             done();
         });
 
@@ -208,7 +208,7 @@ suite('CompletionRegexes', () => {
                 "m", " macro a.m", false, "",
             ];
 
-            checkResultsSearchWord(CompletionRegexesMock.regexEveryMacroForWord, insOuts, 'asm-collection');
+            checkResultsSearchWord(CompletionRegexesMock.regexEveryMacroForWord, insOuts, LanguageId.ASM_COLLECTION);
             done();
         });
 
@@ -227,7 +227,7 @@ suite('CompletionRegexes', () => {
                 "m", " macro a.m", false, "",
             ];
 
-            checkResultsSearchWord(CompletionRegexesMock.regexEveryMacroForWord, insOuts, 'asm-list-file');
+            checkResultsSearchWord(CompletionRegexesMock.regexEveryMacroForWord, insOuts, LanguageId.ASM_LIST_FILE);
             done();
         });
     });

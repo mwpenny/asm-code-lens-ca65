@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import {AllowedLanguageIds} from './languageId';
 import {CommonRegexes} from './regexes/commonregexes';
 import {grepMultiple, reduceLocations} from './grep';
 import {Config} from './config';
@@ -36,7 +35,7 @@ export class HoverProvider implements vscode.HoverProvider {
         }
 
         // It is a non local label
-        const languageId = document.languageId as AllowedLanguageIds;
+        const languageId = document.languageId;
         const range = document.getWordRangeAtPosition(position);
         const searchWord = document.getText(range);
         // regexes for labels with and without colon
@@ -51,7 +50,7 @@ export class HoverProvider implements vscode.HoverProvider {
         const searchCA65 = CommonRegexes.regexCA65DirectiveForWord(searchWord);
         regexes.push(searchCA65);
 
-        const locations = await grepMultiple(regexes, config.wsFolderPath, languageId, config.excludeFiles);
+        const locations = await grepMultiple(regexes, config.includeFiles, config.excludeFiles);
         // Reduce the found locations.
         const regexLbls = CommonRegexes.regexLabel(config, languageId);
         const reducedLocations = await reduceLocations(regexLbls, locations, document.fileName, position, false, true, regexEnd);

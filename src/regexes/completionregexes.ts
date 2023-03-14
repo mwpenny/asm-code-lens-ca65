@@ -1,4 +1,4 @@
-import {AllowedLanguageIds} from '../languageId';
+import {LanguageId} from '../languageId';
 
 /**
  * All regexes that are used for the completion provider.
@@ -11,7 +11,7 @@ export class CompletionRegexes {
 	 * @param cfg: {labelsWithColons, labelsWithoutColons} Add regex with colons /
 	 * Add regex without colons
 	 */
-	public static regexesEveryLabelForWord(fuzzySearchWord: string, cfg: {labelsWithColons: boolean, labelsWithoutColons: boolean}, languageId: AllowedLanguageIds): RegExp[] {
+	public static regexesEveryLabelForWord(fuzzySearchWord: string, cfg: {labelsWithColons: boolean, labelsWithoutColons: boolean}, languageId: string): RegExp[] {
 		const regexes: RegExp[] = [];
 		// Find all "some.thing:" (labels) in the document
 		if (cfg.labelsWithColons) {
@@ -19,7 +19,7 @@ export class CompletionRegexes {
 			regexes.push(searchRegex);
 		}
 		// Find all sjasmplus labels without ":" in the document
-		if (cfg.labelsWithoutColons && languageId == 'asm-collection') {
+		if (cfg.labelsWithoutColons && languageId == LanguageId.ASM_COLLECTION) {
 			const searchRegex2 = this.regexEveryLabelWithoutColonForWord(fuzzySearchWord);
 			regexes.push(searchRegex2);
 		}
@@ -54,8 +54,8 @@ export class CompletionRegexes {
 	 * @param languageId either "asm-collection" or "asm-list-file".
 	 * A different regex is returned dependent on languageId.
 	 */
-	protected static regexEveryLabelColonForWord(fuzzySearchWord: string, languageId: AllowedLanguageIds): RegExp {
-		if (languageId === 'asm-list-file') {
+	protected static regexEveryLabelColonForWord(fuzzySearchWord: string, languageId: string): RegExp {
+		if (languageId === LanguageId.ASM_LIST_FILE) {
 			return new RegExp('^(.*)\\b' + fuzzySearchWord + '[\\w\\.]*:(?:[^:]|$)', 'i');
 		}
 		// "asm-collection"
@@ -75,8 +75,8 @@ export class CompletionRegexes {
 	 * @param languageId either "asm-collection" or "asm-list-file".
 	 * A different regex is returned dependent on languageId.
 	 */
-	public static regexEveryModuleForWord(fuzzySearchWord: string, languageId: AllowedLanguageIds): RegExp {
-		if (languageId == 'asm-list-file') {
+	public static regexEveryModuleForWord(fuzzySearchWord: string, languageId: string): RegExp {
+		if (languageId == LanguageId.ASM_LIST_FILE) {
 			return new RegExp('^(.*?\\s+(MODULE)\\s+)' + fuzzySearchWord + '[\\w\\.]*', 'i');
 		}
 		// "asm-collection"
@@ -95,8 +95,8 @@ export class CompletionRegexes {
 	 * @param languageId either "asm-collection" or "asm-list-file".
 	 * A different regex is returned dependent on languageId.
 	 */
-	public static regexEveryMacroForWord(fuzzySearchWord: string, languageId: AllowedLanguageIds): RegExp {
-		if (languageId == 'asm-list-file') {
+	public static regexEveryMacroForWord(fuzzySearchWord: string, languageId: string): RegExp {
+		if (languageId == LanguageId.ASM_LIST_FILE) {
 			return new RegExp('^(.*?\\s+(MACRO)\\s+)' + fuzzySearchWord + '[\\w\\._]*', 'i');
 		}
 		// "asm-collection"

@@ -16,7 +16,7 @@ import {Config} from './config';
 import {DonateInfo} from './donate/donateinfo';
 import {WorkspaceSymbolProvider} from './WorkspaceSymbolProvider';
 import {FoldingProvider} from './FoldingRangeProvider';
-import {LanguageId}  from './languageId';
+import {LanguageId} from './languageId';
 
 
 
@@ -75,13 +75,19 @@ export function activate(context: vscode.ExtensionContext) {
         const doc = editor?.document;
         if (!doc)
             return;
-        const languageId = doc.languageId;
-        if (!LanguageId.isValidId(languageId))
-            return;
+
         // Check which workspace
         const config = Config.getConfigForDoc(doc);
         if (!config)
             return;
+
+        // Check if document matches configured selector
+        const includePattern = new vscode.RelativePattern(doc.uri, config.includeFiles);
+        const docIsIncluded = vscode.languages.match(includePattern, doc) > 0;
+        if (!docIsIncluded)
+            return;
+
+        const languageId = doc.languageId;
 
         // Found. Find labels
         await Commands.findLabelsWithNoReference(config, languageId);
@@ -128,14 +134,27 @@ function configure(context: vscode.ExtensionContext, event?: vscode.Configuratio
     Config.init();
 
     const asmSourceFiles: vscode.DocumentFilter[] = [
-        {scheme: "file", language: 'asm-collection'},
-        {scheme: "file", language: 'ca65'}
+        {scheme: "file", language: LanguageId.ASM_COLLECTION}
     ];
+
+    // Add configured filter for each workspace
+    const workspaceFolders = vscode.workspace.workspaceFolders || [];
+    for (const workspaceFolder of workspaceFolders) {
+        const workspaceConfig = Config.getConfigForWorkspace(workspaceFolder);
+
+        if (workspaceConfig) {
+            const pattern = new vscode.RelativePattern(
+                workspaceFolder,
+                workspaceConfig.includeFiles
+            );
+            asmSourceFiles.push({ scheme: "file", pattern })
+        }
+    }
 
     // Both "languages": asm files and list files.
     const asmListFiles: vscode.DocumentFilter[] = [
         ...asmSourceFiles,
-        {scheme: "file", language: 'asm-list-file'}
+        {scheme: "file", language: LanguageId.ASM_LIST_FILE}
     ];
 
     // Multiroot: One provider for all workspace folders:

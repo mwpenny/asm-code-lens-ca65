@@ -1,4 +1,3 @@
-import { AllowedLanguageIds } from './languageId';
 import { CommonRegexes } from './regexes/commonregexes';
 import { DefinitionRegexes } from './regexes/definitionregexes';
 import * as vscode from 'vscode';
@@ -81,7 +80,7 @@ export class DefinitionProvider implements vscode.DefinitionProvider {
             return undefined;  // Abort
 
         // Find all "something:" (labels) in the document, also labels without colon.
-        const languageId = document.languageId as AllowedLanguageIds;
+        const languageId = document.languageId;
         const regexes = CommonRegexes.regexesLabelForWord(searchWord, config, languageId);
         // Find all sjasmplus MODULEs in the document
         const searchSjasmModule = CommonRegexes.regexModuleForWord(searchWord);
@@ -96,7 +95,7 @@ export class DefinitionProvider implements vscode.DefinitionProvider {
         const searchCA65 = CommonRegexes.regexCA65DirectiveForWord(searchWord);
         regexes.push(searchCA65);
 
-        const locations = await grepMultiple(regexes, config.wsFolderPath, document.languageId, config.excludeFiles);
+        const locations = await grepMultiple(regexes, config.includeFiles, config.excludeFiles);
         const regexLbls = CommonRegexes.regexLabel(config, languageId);
         const reducedLocations = await reduceLocations(regexLbls, locations, document.fileName, position, false, true, /\w/);
         // There should be only one location.

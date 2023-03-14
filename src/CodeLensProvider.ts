@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import {AllowedLanguageIds} from './languageId';
 import {CommonRegexes} from './regexes/commonregexes';
 import {grep, grepTextDocumentMultiple, reduceLocations} from './grep';
 import {Config} from './config';
@@ -53,16 +52,14 @@ export class CodeLensProvider implements vscode.CodeLensProvider {
             return undefined;   // Don't show code lenses at all.
 
         // Find all code lenses
-        const languageId = document.languageId as AllowedLanguageIds;
+        const languageId = document.languageId;
 
         //console.log(document.uri.fsPath);
         const codeLenses: Array<vscode.CodeLens> = [];
-
         const regexes: RegExp[] = [
             CommonRegexes.regexLabel(config, languageId),
             CommonRegexes.regexAllCA65Directives()
         ];
-
         const matches = grepTextDocumentMultiple(document, regexes);
         // Loop all matches and create code lenses
         for (const fmatch of matches) {
@@ -105,16 +102,15 @@ export class CodeLensProvider implements vscode.CodeLensProvider {
         //console.log('resolveCodeLens start: ', codeLens.document.uri.fsPath);
         // Search the references
         const searchWord = codeLens.symbol;
+        const searchRegex = CommonRegexes.regexAnyReferenceForWord(searchWord);
         //console.log('searchWord', searchWord);
 
         const doc = codeLens.document;
         const pos = codeLens.range.start;
         const config: Config = codeLens.config;
 
-        const languageId = doc.languageId as AllowedLanguageIds;
-        const searchRegex = CommonRegexes.regexAnyReferenceForWord(searchWord, languageId);
-
-        const locations = await grep(searchRegex, config.wsFolderPath, languageId, config.excludeFiles);
+        const languageId = doc.languageId;
+        const locations = await grep(searchRegex, config.includeFiles, config.excludeFiles);
         // Remove any locations because of module information (dot notation)
         const regexLbls = CommonRegexes.regexLabel(config, languageId);
         const reducedLocations = await reduceLocations(regexLbls, locations, doc.fileName, pos, true, true);

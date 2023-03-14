@@ -1,4 +1,4 @@
-import { AllowedLanguageIds } from './languageId';
+import { LanguageId } from './languageId';
 import * as vscode from 'vscode';
 import {Config} from './config';
 import {CommonRegexes} from './regexes/commonregexes';
@@ -81,7 +81,7 @@ export class WorkspaceSymbolProvider implements vscode.WorkspaceSymbolProvider {
      */
     protected async getWsSymbols(config: Config, query: string): Promise<vscode.SymbolInformation[]> {
         // Allow symbols only for asm files (not list files)
-        const languageId: AllowedLanguageIds = 'asm-collection';
+        const languageId = LanguageId.ASM_COLLECTION;
 
         // Prepare search
         const fuzzySearchWord = CommonRegexes.regexPrepareFuzzy(query);
@@ -98,7 +98,7 @@ export class WorkspaceSymbolProvider implements vscode.WorkspaceSymbolProvider {
         const searchCA65 = CommonRegexes.regexCA65DirectiveForWord(fuzzySearchWord, true);
         regexes.push(searchCA65);
 
-        const locations = await grepMultiple(regexes, config.wsFolderPath, languageId, config.excludeFiles);
+        const locations = await grepMultiple(regexes, config.includeFiles, config.excludeFiles);
 
         // Go through all found locations
         const symbols: vscode.SymbolInformation[] = [];

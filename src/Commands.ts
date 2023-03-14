@@ -1,4 +1,4 @@
-import { AllowedLanguageIds } from './languageId';
+import { LanguageId } from './languageId';
 import { CommonRegexes } from './regexes/commonregexes';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -24,14 +24,14 @@ export class Commands {
      * (config.rootFolder The search is limited to the root / project
      * folder. This needs to contain a trailing '/'.)
      */
-    public static async findLabelsWithNoReference(config: Config, languageId: AllowedLanguageIds): Promise<void> {
+    public static async findLabelsWithNoReference(config: Config, languageId: string): Promise<void> {
         // Get regexes
         const regexes = [
             CommonRegexes.regexLabel(config, languageId),
             CommonRegexes.regexAllCA65Directives()
         ]
         // Get all label definition (locations)
-        const labelLocations = await grepMultiple(regexes, config.wsFolderPath, languageId, config.excludeFiles);
+        const labelLocations = await grepMultiple(regexes, config.includeFiles, config.excludeFiles);
 
         //dbgPrintLocations(locations);
         // locations is a GrepLocation array that contains all found labels.
@@ -46,9 +46,9 @@ export class Commands {
      * @param locLabels A list of GrepLocations.
      * @param rootFolder The search is limited to the root / project folder. This needs to contain a trailing '/'.
      */
-    protected static async findLabels(locLabels, cfg: Config, languageId: AllowedLanguageIds): Promise<void> {
+    protected static async findLabels(locLabels, cfg: Config, languageId: string): Promise<void> {
         const baseName = path.basename(cfg.wsFolderPath);
-        const typename = (languageId == 'asm-list-file') ? 'list' : 'asm';
+        const typename = (languageId == LanguageId.ASM_LIST_FILE) ? 'list' : 'asm';
         output.appendLine("Unreferenced labels for " + typename + " files, " + baseName + ":");
         output.show(true);
 
@@ -78,8 +78,8 @@ export class Commands {
                 const fileName = fm.filePath;
 
                 // And search for references
-                const regex = CommonRegexes.regexAnyReferenceForWord(searchLabel, languageId);
-                const locations = await grep(regex, cfg.wsFolderPath, languageId, cfg.excludeFiles);
+                const regex = CommonRegexes.regexAnyReferenceForWord(searchLabel);
+                const locations = await grep(regex, cfg.includeFiles, cfg.excludeFiles);
                 // Remove any locations because of module information (dot notation)
                 const reducedLocations = await reduceLocations(regexLbls, locations, fileName, pos, true, true);
                 // Check count

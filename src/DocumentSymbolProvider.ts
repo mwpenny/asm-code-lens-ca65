@@ -1,4 +1,3 @@
-import { AllowedLanguageIds } from './languageId';
 import * as vscode from 'vscode';
 import {stripAllComments} from './comments';
 import {Config} from './config';
@@ -32,7 +31,7 @@ export class DocumentSymbolProvider implements vscode.DocumentSymbolProvider {
         // a code-relative-label, an const-label (EQU) or a
         // data-label and creates symbols for each.
         // Those symbols are returned.
-        const languageId = document.languageId as AllowedLanguageIds;
+        const languageId = document.languageId;
         let symbols: vscode.DocumentSymbol[] = [];
         const regexLabel = CommonRegexes.regexLabel(config, languageId);
 
@@ -84,7 +83,7 @@ export class DocumentSymbolProvider implements vscode.DocumentSymbolProvider {
                         // Relative label
                         lastAbsSymbolChildren?.push(lastSymbol);
                     }
-                    else if (languageId !== 'ca65' && label.startsWith('@')) {
+                    else if (!config.enableCA65CheapLocalLabelNestingInOutline && label.startsWith('@')) {
                         // Absolute label ignoring MODULE
                         symbols.push(lastSymbol);
                     }

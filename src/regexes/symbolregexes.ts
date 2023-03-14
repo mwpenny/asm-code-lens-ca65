@@ -1,4 +1,4 @@
-import { AllowedLanguageIds } from '../languageId';
+import { LanguageId } from '../languageId';
 
 
 /**
@@ -63,8 +63,8 @@ export class SymbolRegexes {
 	 * 2 = "label"
 	 * Note: For list files undefined is returned.
 	 */
-	public static regexMacro(languageId: AllowedLanguageIds): RegExp | undefined {
-		if (languageId === 'asm-list-file')
+	public static regexMacro(languageId: string): RegExp | undefined {
+		if (languageId === LanguageId.ASM_LIST_FILE)
 			return undefined;
 		return /\b(macro)\s+(.*)/i;
 	}

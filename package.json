@@ -145,6 +145,13 @@
                     "type": "string",
                     "default": ";"
                 },
+                "asm-code-lens.outline.enableCA65CheapLocalLabelNesting": {
+                    "order": 100,
+                    "scope": "resource",
+                    "type": "boolean",
+                    "default": true,
+                    "markdownDescription": "Enable/disable nesting of CA65-style cheap local labels (@ prefix) in the document outline."
+                },
                 "asm-code-lens.labels.colon": {
                     "order": 101,
                     "scope": "resource",
@@ -160,7 +167,7 @@
                         "Only labels with a trailing colon",
                         "Only labels without a trailing colon"
                     ],
-                    "default": "Both"
+                    "default": "With colon"
                 },
                 "asm-code-lens.labels.excludes": {
                     "order": 102,
@@ -168,6 +175,13 @@
                     "markdownDescription": "Configure here a comma separated list of words that should not be recognized as labels. E.g. if asm-code-lens wrongly interprets an assembler directive as label you can exclude it here. For example `if;then;else;elif;endif`. The exclude is case-insensitive.",
                     "type": "string",
                     "default": ""
+                },
+                "asm-code-lens.includeFiles": {
+                    "order": 110,
+                    "scope": "resource",
+                    "type": "string",
+                    "default": "**/*.{asm,inc,s,a80}",
+                    "markdownDescription": "Choose what files to include e.g `**/*.{asm,inc,s,a80,z80}`. If your assembler sources suffix is different then you can change it here."
                 },
                 "asm-code-lens.excludeFiles": {
                     "order": 111,
@@ -221,7 +235,6 @@
         "menus": {
             "editor/context": [
                 {
-                    "when": "resourceLangId == asm-collection || resourceLangId == asm-list-file || resourceLangId == ca65",
                     "command": "asm-code-lens.find-labels-with-no-reference",
                     "group": "0_navigation@10"
                 }

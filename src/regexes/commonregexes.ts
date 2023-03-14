@@ -1,4 +1,4 @@
-import { AllowedLanguageIds } from './../languageId';
+import { LanguageId } from '../languageId';
 import { RegexIndexOf, RegexTwo } from './extendedregex';
 
 
@@ -32,8 +32,8 @@ export class CommonRegexes {
 	 * @param languageId either "asm-collection" or "asm-list-file".
 	 * A different regex is returned dependent on languageId.
      */
-    public static regexLabelWithColon(languageId: AllowedLanguageIds): RegExp {
-        if (languageId === 'asm-list-file') {
+    public static regexLabelWithColon(languageId: string): RegExp {
+        if (languageId === LanguageId.ASM_LIST_FILE) {
             return new RegexIndexOf(':', /(^[^#]*\s@?)([a-z_][\w\.]*):/i);
         }
 		// "asm-collection"
@@ -64,7 +64,7 @@ export class CommonRegexes {
 	 * @param languageId either "asm-collection" or "asm-list-file".
 	 * A different regex is returned dependent on languageId.
      */
-    public static regexLabel(cfg: {labelsWithColons: boolean, labelsWithoutColons: boolean}, languageId: AllowedLanguageIds): RegExp {
+    public static regexLabel(cfg: {labelsWithColons: boolean, labelsWithoutColons: boolean}, languageId: string): RegExp {
         if (languageId === "asm-list-file")   // List file: only with colons
             return CommonRegexes.regexLabelWithColon(languageId);
 
@@ -139,8 +139,8 @@ export class CommonRegexes {
 	 * @param languageId either "asm-collection" or "asm-list-file".
 	 * A different regex is returned dependent on languageId.
      */
-    public static regexLabelColonForWord(searchWord: string, languageId: AllowedLanguageIds): RegExp {
-        if (languageId == 'asm-list-file') {
+    public static regexLabelColonForWord(searchWord: string, languageId: string): RegExp {
+        if (languageId == LanguageId.ASM_LIST_FILE) {
             return new RegexTwo(new RegExp(searchWord, 'i'), new RegExp('^(.*?\\s)([[a-zA-Z_\\.][\\w\\.]*)?\\b' + searchWord + ':'));
         }
 		// "asm-collection"
@@ -167,7 +167,7 @@ export class CommonRegexes {
 	 * @param languageId either "asm-collection" or "asm-list-file".
 	 * A different regex is returned dependent on languageId.
      */
-    public static regexesLabelForWord(searchWord: string, cfg: {labelsWithColons: boolean, labelsWithoutColons: boolean}, languageId: AllowedLanguageIds): RegExp[] {
+    public static regexesLabelForWord(searchWord: string, cfg: {labelsWithColons: boolean, labelsWithoutColons: boolean}, languageId: string): RegExp[] {
         const regexes: RegExp[] = [];
         // Find all "some.thing:" (labels) in the document
         if (cfg.labelsWithColons) {
@@ -175,7 +175,7 @@ export class CommonRegexes {
             regexes.push(searchRegex);
         }
         // Find all sjasmplus labels without ":" in the document
-        if (cfg.labelsWithoutColons && languageId == 'asm-collection') {
+        if (cfg.labelsWithoutColons && languageId == LanguageId.ASM_COLLECTION) {
             const searchRegex2 = CommonRegexes.regexLabelWithoutColonForWord(searchWord);
             regexes.push(searchRegex2);
         }
@@ -256,12 +256,8 @@ export class CommonRegexes {
      *  1 = preceding characters before 'searchWord'.
      * Used by resolveCodeLens.
      */
-    public static regexAnyReferenceForWord(searchWord: string, languageId: AllowedLanguageIds): RegExp {
-        if (languageId === 'ca65') {
-            return new RegexIndexOf(searchWord, new RegExp('^([^;]*)\\b' + searchWord + '\\b'));
-        }
-
-        return new RegexIndexOf(searchWord, new RegExp('^([^#]*)\\b' + searchWord + '\\b'));
+    public static regexAnyReferenceForWord(searchWord: string): RegExp {
+        return new RegexIndexOf(searchWord, new RegExp('^([^;]*)\\b' + searchWord + '\\b'));
     }
 
 

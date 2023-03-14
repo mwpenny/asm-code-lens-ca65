@@ -4,6 +4,7 @@ import {CompletionRegexes} from '../src/regexes/completionregexes';
 import * as fs from 'fs';
 import {RenameRegexes} from '../src/regexes/renameregexes';
 import {CommandsRegexes} from '../src/regexes/commandsregexes';
+import {LanguageId} from '../src/languageId';
 
 
 // For access to protected functions.
@@ -233,12 +234,12 @@ suite('Performance', () => {
 
 
         test('regexLabelColonForWord asm', () => {
-            const speed = compare(CommonRegexes.regexLabelColonForWord('pause', 'asm-collection'), RefRegexes.regexLabelColonForWord('pause'), true, false, BASE_COUNT);
+            const speed = compare(CommonRegexes.regexLabelColonForWord('pause', LanguageId.ASM_COLLECTION), RefRegexes.regexLabelColonForWord('pause'), true, false, BASE_COUNT);
             console.log('regexLabelColonForWord asm: ', speed + '% speed');
         });
 
         test('regexLabelColonForWord list', () => {
-            const speed = compare(CommonRegexes.regexLabelColonForWord('pause', 'asm-list-file'), RefRegexes.regexLabelColonForWord('pause'), true, false, BASE_COUNT);
+            const speed = compare(CommonRegexes.regexLabelColonForWord('pause', LanguageId.ASM_LIST_FILE), RefRegexes.regexLabelColonForWord('pause'), true, false, BASE_COUNT);
             console.log('regexLabelColonForWord list: ', speed + '% speed');
         });
 
@@ -263,12 +264,12 @@ suite('Performance', () => {
         });
 
         test('regexAnyReferenceForWord short word', () => {
-            const speed = compare(CommonRegexes.regexAnyReferenceForWord('a', 'asm-collection'), RefRegexes.regexAnyReferenceForWord('a'), true, true, BASE_COUNT);
+            const speed = compare(CommonRegexes.regexAnyReferenceForWord('a'), RefRegexes.regexAnyReferenceForWord('a'), true, true, BASE_COUNT);
             console.log('regexAnyReferenceForWord short word: ', speed + '% speed');
         });
 
         test('regexAnyReferenceForWord', () => {
-            const speed = compare(CommonRegexes.regexAnyReferenceForWord('pause', 'asm-collection'), RefRegexes.regexAnyReferenceForWord('pause'), true, true, BASE_COUNT);
+            const speed = compare(CommonRegexes.regexAnyReferenceForWord('pause'), RefRegexes.regexAnyReferenceForWord('pause'), true, true, BASE_COUNT);
             console.log('regexAnyReferenceForWord: ', speed + '% speed');
         });
 
